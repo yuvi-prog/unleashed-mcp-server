@@ -19,6 +19,12 @@ Read-only tools covering:
 - **Stock adjustments** — `list_stock_adjustments`
 - **Stock transfers** — `list_stock_transfers`
 - **Product groups** — `list_product_groups`
+- **Credit notes** — `list_credit_notes` (returns/refunds)
+- **Assemblies** — `list_assemblies` (manufacturing/bill-of-materials builds)
+- **Sales shipments** — `list_sales_shipments` (dispatch/tracking, distinct from order status)
+- **Sales invoices** — `list_sales_invoices` (billing/revenue)
+- **Stock counts** — `list_stock_counts` (stocktakes/cycle counts)
+- **Recost adjustments** — `list_recost_adjustments` (retrospective landed-cost corrections)
 
 All tools are read-only (GET requests against the Unleashed API). No
 write/create/update actions are included.

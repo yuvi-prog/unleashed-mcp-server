@@ -368,7 +368,7 @@ export const tools: ToolDef[] = [
         .describe("Only include transfers on/before this date (YYYY-MM-DD)."),
     },
     handler: async ({ page, pageSize, startDate, endDate }) =>
-      listEndpoint("StockTransfers", page, pageSize, { startDate, endDate }),
+      listEndpoint("WarehouseStockTransfers", page, pageSize, { startDate, endDate }),
   },
 
   // -------------------------------------------------------------------
@@ -380,5 +380,171 @@ export const tools: ToolDef[] = [
       "List product groups (categories) configured in Unleashed. Useful for understanding how products are segmented before filtering other queries.",
     inputShape: {},
     handler: async () => textResult(await unleashedGet("ProductGroups")),
+  },
+
+  // -------------------------------------------------------------------
+  // Credit notes (returns/refunds)
+  // -------------------------------------------------------------------
+  {
+    name: "list_credit_notes",
+    description:
+      "List credit notes (customer returns/refunds), optionally filtered by customer or date range. Use this to answer questions about returns, refunds, or credits issued.",
+    inputShape: {
+      ...pageArgs,
+      customerCode: z
+        .string()
+        .optional()
+        .describe("Filter to a specific customer code."),
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include credit notes on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include credit notes on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, customerCode, startDate, endDate }) =>
+      listEndpoint("CreditNotes", page, pageSize, { customerCode, startDate, endDate }),
+  },
+
+  // -------------------------------------------------------------------
+  // Assemblies (manufacturing / bill of materials)
+  // -------------------------------------------------------------------
+  {
+    name: "list_assemblies",
+    description:
+      "List assembly/manufacturing orders (bill-of-materials builds), optionally filtered by status or date range. Use this for questions about production activity, component consumption, or manufacturing costs for assembled/kitted products.",
+    inputShape: {
+      ...pageArgs,
+      assemblyStatus: z
+        .string()
+        .optional()
+        .describe("Filter by status, e.g. Parked, InProgress, Completed, Deleted."),
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include assemblies on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include assemblies on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, assemblyStatus, startDate, endDate }) =>
+      listEndpoint("Assemblies", page, pageSize, { assemblyStatus, startDate, endDate }),
+  },
+
+  // -------------------------------------------------------------------
+  // Sales shipments (dispatch/fulfillment tracking)
+  // -------------------------------------------------------------------
+  {
+    name: "list_sales_shipments",
+    description:
+      "List sales shipments (dispatch records for sales orders), optionally filtered by order number, status, warehouse, or date range. Use this to answer 'what's been shipped' or tracking-related questions, as distinct from order status alone.",
+    inputShape: {
+      ...pageArgs,
+      orderNumber: z
+        .string()
+        .optional()
+        .describe("Filter to shipments for a specific sales order number."),
+      shipmentStatus: z
+        .string()
+        .optional()
+        .describe("Filter by shipment status, e.g. Parked, Dispatched, Completed."),
+      warehouseCode: z
+        .string()
+        .optional()
+        .describe("Filter to a specific warehouse code."),
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include shipments on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include shipments on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, orderNumber, shipmentStatus, warehouseCode, startDate, endDate }) =>
+      listEndpoint("SalesShipments", page, pageSize, {
+        orderNumber,
+        shipmentStatus,
+        warehouseCode,
+        startDate,
+        endDate,
+      }),
+  },
+
+  // -------------------------------------------------------------------
+  // Sales invoices (revenue/billing)
+  // -------------------------------------------------------------------
+  {
+    name: "list_sales_invoices",
+    description:
+      "List sales invoices, optionally filtered by customer or date range. Use this for revenue/billing questions, as distinct from sales order status.",
+    inputShape: {
+      ...pageArgs,
+      customerCode: z
+        .string()
+        .optional()
+        .describe("Filter to a specific customer code."),
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include invoices on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include invoices on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, customerCode, startDate, endDate }) =>
+      listEndpoint("SalesInvoices", page, pageSize, { customerCode, startDate, endDate }),
+  },
+
+  // -------------------------------------------------------------------
+  // Stock counts (cycle counts / stocktakes)
+  // -------------------------------------------------------------------
+  {
+    name: "list_stock_counts",
+    description:
+      "List stock count / stocktake records, optionally filtered by warehouse or date range. Use this to answer questions about inventory accuracy, discrepancies found during counts, or when a warehouse was last counted.",
+    inputShape: {
+      ...pageArgs,
+      warehouseCode: z
+        .string()
+        .optional()
+        .describe("Filter to a specific warehouse code."),
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include stock counts on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include stock counts on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, warehouseCode, startDate, endDate }) =>
+      listEndpoint("StockCounts", page, pageSize, { warehouseCode, startDate, endDate }),
+  },
+
+  // -------------------------------------------------------------------
+  // Recost adjustments (landed cost corrections / margin accuracy)
+  // -------------------------------------------------------------------
+  {
+    name: "list_recost_adjustments",
+    description:
+      "List recost adjustments (retrospective landed-cost corrections applied to purchase orders), optionally filtered by date range. Use this to understand margin/cost accuracy corrections, e.g. when freight or duty costs were allocated after the fact.",
+    inputShape: {
+      ...pageArgs,
+      startDate: z
+        .string()
+        .optional()
+        .describe("Only include adjustments completed on/after this date (YYYY-MM-DD)."),
+      endDate: z
+        .string()
+        .optional()
+        .describe("Only include adjustments completed on/before this date (YYYY-MM-DD)."),
+    },
+    handler: async ({ page, pageSize, startDate, endDate }) =>
+      listEndpoint("RecostAdjustments", page, pageSize, { startDate, endDate }),
   },
 ];
